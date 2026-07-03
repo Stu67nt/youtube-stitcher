@@ -1,7 +1,6 @@
 import yt_dlp
 import time
 import random
-import string
 import json
 import os
 import extract_word_timestamps
@@ -121,16 +120,6 @@ def find_word_stamps(text):
         print(f"{words_complete}/{len(text_lst)}")
     return clip_seq
 
-def create_clip_sequence_list(text, text_lst):
-    filt_text = text.translate(str.maketrans('', '', string.punctuation)).lower()
-    filt_text_lst = list(filt_text.split(" "))
-    clip_seq = []
-    for word in filt_text_lst:
-        for entry in text_lst:
-            if word == entry[0]:
-                clip_seq.append(entry)
-    return clip_seq
-
 def compile_clips(clips_times_lst):
     for clip in clips_times_lst:
         dir_list = os.listdir("temp_clips")
@@ -160,18 +149,23 @@ def merge_clips(clip_seq):
                 clip_lst.append(moviepy.VideoFileClip(f"temp_clips\\{dir_list[i]}"))
     final = moviepy.concatenate_videoclips(clip_lst)
     final.write_videofile(f"{random.randint(1000,9999)}.mp4")
+    files_to_delete = os.listdir("temp_clips")
+    for file in files_to_delete:
+        os.remove(f"temp_clips/{file}")
 
 def make_clip(text):
+    print("Finding word locations")
     clip_seq = find_word_stamps(text)
-    print(clip_seq)
-    # clip_seq = create_clip_sequence_list(text, word_dic)
+    print("Downloading the clips")
     compile_clips(clip_seq)
+    print("Creating the video")
     merge_clips(clip_seq)
 
-extract_ids()
-extract_subtitles()
+def main():
+    while True:
+        print("Click CRTL+C to exit!")
+        message = input("Enter the message you would like to be generated in video form: ")
+        make_clip(message)
 
-txt = """The earth is most definitely flat"""
-#word_dic = find_word_stamps(txt)
-#print(word_dic)
-#make_clip(txt)
+if __name__ == "__main__":
+    main()
