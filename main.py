@@ -67,7 +67,7 @@ def calc_best_duration(all_words, start_i, match_len):
     return (all_words[-1][1] - all_words[start_i][1]) + 1
 
 def find_word_stamps(text):
-    text = text.translate(str.maketrans('', '', "%&()*+,-./:;<=>?@[\]^_`{|}~")).lower()
+    text = text.translate(str.maketrans('', '', r"%&()*+,-./:;<=>?@[\]^_`{|}~")).lower()
     text_lst = list(text.split(" "))
     dir_list = os.listdir("jsonsubtitles")
     clip_seq = []
